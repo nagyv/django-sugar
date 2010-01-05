@@ -39,7 +39,7 @@ var AddRemoveFields = {
 		}
 	},
 	init_single: function(base_id) {
-		$('#id_' + base_id + "-TOTAL_FORMS").parents('fieldset').append(
+		$('#id_' + base_id + "-TOTAL_FORMS").parent().append(
 			AddRemoveFields.html_template.replace("{{prefix}}", base_id)
 			);
 	},
@@ -60,7 +60,7 @@ var AddRemoveFields = {
 		return el;
 	},
 	add_inline_form: function(name) {
-    var parent = $('#id_'+name+'-0-id').parents('fieldset')[0]
+    var parent = $('#id_'+name+'-0-id').parent()[0]
     var last = $(parent).children()[$(parent).children().length-2]
     var count = $('input#id_'+name+'-TOTAL_FORMS').val()
 		var copy = AddRemoveFields.increment_form_ids($(last).clone(true), count, name)
@@ -80,15 +80,15 @@ var AddRemoveFields = {
  * @author nagyv
  */
 function CreateSwitchingCheckbox() {
-	var billing = $("#id_bill-add_billing");
+	var billing = $("#id_0-add_billing");
 	if (billing) {
 		billing.parent().parent().find('input').attr("disabled", "disabled");
 		billing.parent().parent().find('textarea').attr("disabled", "disabled");
 		billing.parent().parent().find('select').attr("disabled", "disabled");
-		$("#id_bill-add_billing").attr("disabled", false);
+		billing.attr("disabled", false);
 	};
-	$("#id_bill-add_billing").click(function(){
-		if ( $("#id_bill-add_billing").attr('checked') ) {
+	billing.click(function(){
+		if ( billing.attr('checked') ) {
 			billing.parent().parent().find('input').attr("disabled", false);
 			billing.parent().parent().find('textarea').attr("disabled", false);
 			billing.parent().parent().find('select').attr("disabled", false);	
@@ -97,17 +97,62 @@ function CreateSwitchingCheckbox() {
 			billing.parent().parent().find('input').attr("disabled", "disabled");
 			billing.parent().parent().find('textarea').attr("disabled", "disabled");
 			billing.parent().parent().find('select').attr("disabled", "disabled");
-			$("#id_bill-add_billing").attr("disabled", false);
+			billing.attr("disabled", false);
 		};
 	});
 };
 
+/**
+ * Creates a list with in-page links for the elements in selector
+ * 
+ * The returned html is dl#in-page-menu
+ */
+function CreateMenu(selector, context) {
+	$('#in-page-menu').remove();
+	if ($(context).find(selector).length == 0) {return false;};
+	var menu = '<dl id="in-page-menu"><dt>' + gettext('Jump to') + '</dt>%</dl>';
+	var items = '';
+	$(context).find(selector).each(function(i){
+		var id = $(this).attr('id');
+		if (id=='') {
+			while($('#linked-' + i).length > 0) {
+				i++;
+			}
+			$(this).attr('id', 'linked-' + i);
+			id = 'linked-' + i;
+			}
+		items += '<dd><a href="#' + id + '">' + $(this).html() + '</a></dd>'; 
+	});
+	menu = menu.replace('%', items);
+	$('body').append(menu);
+	$('#in-page-menu dt').click(function(){$('#in-page-menu dd').slideToggle();});
+}
+
 $(document).ready(function(){
 	AddRemoveFields.init();
-	if ($("#id_project-deadline").length == 1) {
+	/*if ($("#id_project-deadline").length == 1) {
 		$("#id_project-deadline").datepicker({
 			dateFormat: 'yy-mm-dd'
 		});
-	};
+	};*/
+	if ($('.dateInput').length>0 || $('.dateTimeInput').length>0) {
+  	$('.dateInput').datepicker({
+  		dateFormat: 'yy-mm-dd',
+  	});
+  	$('.dateInput').datepicker('option', $.extend({
+  		showMonthAfterYear: false
+  	}, $.datepicker.regional[$(this).val()]));
+  	$('.dateTimeInput').datepicker({
+  		dateFormat: 'yy-mm-dd'
+  	});
+  	$('.dateTimeInput').datepicker('option', $.extend({
+  		showMonthAfterYear: false
+  	}, $.datepicker.regional[$(this).val()]));
+  };
+	/*if ($('.tabs').length>0) {
+		$('.tabs').tabs({
+			show: function(e, ui){CreateMenu('legend,h3', ui.panel)},
+		});
+	};*/
 	CreateSwitchingCheckbox();
 });
