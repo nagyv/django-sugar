@@ -10,14 +10,13 @@ class GUITextAreaWidget(forms.Textarea):
         js = ("js/jquery.wymeditor.min.js",
               "js/fancyedit.js")
         
-class ButtonWidget(forms.widgets.Widget):
-    
-    button_type = None
+class Button(forms.widgets.Widget):
+    button_type = 'button'
     
     def render(self, name, value, attrs=None):
         final_attrs = self.build_attrs(attrs, type=self.button_type, name=name)
         return mark_safe(u'<button%s>%s</button>' % (flatatt(final_attrs), value))
     
-class SubmitButtonWidget(ButtonWidget):
+class SubmitButton(Button):
     
     button_type = 'submit'
