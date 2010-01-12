@@ -20,3 +20,11 @@ class Button(forms.widgets.Widget):
 class SubmitButton(Button):
     
     button_type = 'submit'
+    
+
+class NoInput(forms.Widget):
+    def render(self, name, value, attrs=None):
+        return mark_safe(value)
+    
+    def _has_changed(self, initial, value):
+        return False
