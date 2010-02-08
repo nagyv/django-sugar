@@ -2,6 +2,8 @@ from django import forms
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.forms.util import flatatt
+from eke import models as eke_model
+from revenue import models as rev_model
 
 class GUITextAreaWidget(forms.Textarea):
     pass
@@ -24,6 +26,13 @@ class SubmitButton(Button):
 
 class NoInput(forms.Widget):
     def render(self, name, value, attrs=None):
+        print name
+        print value
+        if name == 'parent' or name == 'task':
+            value = eke_model.AbstractProject.objects.get(pk=value)
+        elif name == 'related_invoice':
+            if value:
+                value = rev_model.Invoice.objects.get(pk=value)
         hidden_widget = forms.HiddenInput()
         final_attrs = self.build_attrs(attrs, name=name)
         return mark_safe('<p%s>%s</p>%s' % (flatatt(final_attrs), value, 
@@ -35,6 +44,9 @@ class NoInput(forms.Widget):
 class StaticField(forms.Field):
     
     widget = NoInput
+    
+    def __unicode__(self):
+        return self.value.__unicode__()
     
     def __init__(self, value, required=True, widget=None, label=None, initial=None,
                  help_text=None, error_messages=None, show_hidden_initial=False):
