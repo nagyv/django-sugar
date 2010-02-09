@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from django.forms.util import flatatt
 from eke import models as eke_model
 from revenue import models as rev_model
+from django.utils.translation import ugettext_lazy as _
 
 class GUITextAreaWidget(forms.Textarea):
     pass
@@ -26,13 +27,14 @@ class SubmitButton(Button):
 
 class NoInput(forms.Widget):
     def render(self, name, value, attrs=None):
-        print name
-        print value
         if name == 'parent' or name == 'task':
-            value = eke_model.AbstractProject.objects.get(pk=value)
+            if not value == str(value):
+                value = eke_model.AbstractProject.objects.get(pk=value)
         elif name == 'related_invoice':
-            if value:
+            if value and not value == str(value):
                 value = rev_model.Invoice.objects.get(pk=value)
+            else:
+                value = _('No related invoice')
         hidden_widget = forms.HiddenInput()
         final_attrs = self.build_attrs(attrs, name=name)
         return mark_safe('<p%s>%s</p>%s' % (flatatt(final_attrs), value, 
