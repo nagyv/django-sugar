@@ -28,13 +28,15 @@ class SubmitButton(Button):
 class NoInput(forms.Widget):
     def render(self, name, value, attrs=None):
         if name == 'parent' or name == 'task':
-            if not value == str(value):
+            try:
                 value = eke_model.AbstractProject.objects.get(pk=value)
+            except:
+                pass
         elif name == 'related_invoice':
-            if value and not value == str(value):
+            try:
                 value = rev_model.Invoice.objects.get(pk=value)
-            else:
-                value = _('No related invoice')
+            except:
+                pass
         hidden_widget = forms.HiddenInput()
         final_attrs = self.build_attrs(attrs, name=name)
         return mark_safe('<p%s>%s</p>%s' % (flatatt(final_attrs), value, 
