@@ -1,0 +1,2 @@
+{% load i18n %}{% if empty_option %}<option value="">{% trans "Choose" %}</option>{% endif %}
+{% for object in object_list %}<option value="{{ object.pk }}">{{ object }}</option>{% endfor %}
