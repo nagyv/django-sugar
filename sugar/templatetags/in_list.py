@@ -12,4 +12,3 @@ def in_list(value,arg):
     {% endif %}
     '''
     return value in arg
-
