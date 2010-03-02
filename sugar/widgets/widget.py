@@ -43,6 +43,8 @@ class StaticField(forms.Field):
     def __init__(self, value, required=True, widget=None, label=None, initial=None,
                  help_text=None, error_messages=None, show_hidden_initial=False):
         self.value = value
+        if not initial:
+            initial=value
         super(StaticField, self).__init__(required, widget, label, initial,
                  help_text, error_messages, show_hidden_initial)
     
