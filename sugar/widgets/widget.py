@@ -27,11 +27,13 @@ class NoInput(forms.Widget):
     def render(self, name, value, attrs=None):
         hidden_widget = forms.HiddenInput()
         final_attrs = self.build_attrs(attrs, name=name)
-        return mark_safe('<p%s>%s</p>%s' % (flatatt(final_attrs), value, 
+        value = final_attrs['value']
+        return mark_safe('<p%s>%s</p>%s' % (flatatt(final_attrs), value,
                                     hidden_widget.render(name, value, attrs)))
     
     def _has_changed(self, initial, value):
         return False
+
     
 class StaticField(forms.Field):
     
@@ -43,8 +45,7 @@ class StaticField(forms.Field):
     def __init__(self, value, required=True, widget=None, label=None, initial=None,
                  help_text=None, error_messages=None, show_hidden_initial=False):
         self.value = value
-        if not initial:
-            initial=value
+        widget = NoInput(attrs={'value':self.value})
         super(StaticField, self).__init__(required, widget, label, initial,
                  help_text, error_messages, show_hidden_initial)
     
