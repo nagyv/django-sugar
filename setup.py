@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='django-sugar',
-    version='0.2',
+    version='0.2.1',
     license='BSD',
     description='Curated collection of all the sweet Django helpers/utilities \
         developers create, and sometimes recreate too often.',
